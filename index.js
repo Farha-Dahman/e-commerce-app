@@ -4,8 +4,8 @@ import initApp from "./src/modules/app.router.js";
 const app = express();
 const PORT = process.env.PORT || 5555;
 
-initApp(app,express);
+initApp(app, express);
 
-app.listen(PORT,()=>{
-    console.log(`server is running on ${PORT}`);
-})
+app.listen(PORT, () => {
+  console.log(`server is running on ${PORT}`);
+});

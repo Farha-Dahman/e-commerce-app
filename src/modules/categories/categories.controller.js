@@ -1,3 +1,3 @@
-export const getCategories = (req,res)=>{
-    return res.json({message: "Categories"})
-}
+export const getCategories = (req, res) => {
+  return res.json({ message: "Categories" });
+};

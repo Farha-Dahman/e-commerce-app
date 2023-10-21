@@ -11,6 +11,5 @@ const initApp = (app,express)=>{
     app.get('*',(req,res)=>{
         return res.status(500).json({message: "Page not found"})
     })
-    
 }
 export default initApp;

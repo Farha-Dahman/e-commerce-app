@@ -1,3 +1,3 @@
-export const getProducts = (req,res)=>{
-    return res.json({message: "products"})
-}
+export const getProducts = (req, res) => {
+  return res.json({ message: "products" });
+};
