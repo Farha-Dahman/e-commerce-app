@@ -3,7 +3,7 @@ import categoryModel from "../../../DB/model/category.model.js";
 import cloudinary from "../../services/cloudinary.js";
 
 export const getCategories = async (req, res) => {
-  const categories = await categoryModel.find();
+  const categories = await categoryModel.find().populate("subcategory");
   return res.status(200).json({ message: "success", categories });
 };
 
@@ -28,6 +28,8 @@ export const createCategory = async (req, res) => {
     name,
     slug: slugify(name),
     image: { public_id, secure_url },
+    createdBy: req.user._id,
+    updatedBy: req.user._id,
   });
   return res.status(201).json({ message: "success", newCategory });
 };
@@ -51,7 +53,7 @@ export const updateCategory = async (req, res) => {
     }
     if (req.body.name) {
       if (await categoryModel.findOne({ name: req.body.name }).select("name")) {
-        return res.status().json({ message: "This category already exist!" });
+        return res.status(409).json({ message: "This category already exist!" });
       }
       category.name = req.body.name;
       category.slug = slugify(req.body.name);
@@ -69,9 +71,11 @@ export const updateCategory = async (req, res) => {
       await cloudinary.uploader.destroy(category.image.public_id);
       category.image = { public_id, secure_url };
     }
+    category.updatedBy = req.user._id;
     await category.save();
     return res.json({ message: "success", category });
   } catch {
     return res.json({ message: "error" });
   }
 };
+

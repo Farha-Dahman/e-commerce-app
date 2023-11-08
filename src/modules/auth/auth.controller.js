@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import userModel from "../../../DB/model/user.model.js";
 import cloudinary from "../../services/cloudinary.js";
 import jwt from "jsonwebtoken";
+import { sendEmail } from "../../services/email.js";
 
 export const signup = async (req, res) => {
   const { userName, email, password } = req.body;
@@ -19,6 +20,14 @@ export const signup = async (req, res) => {
     {
       folder: `${process.env.APP_NAME}/users`,
     }
+  );
+  const token = jwt.sign({ email }, process.env.CONFIRM_EMAIL_SECRET, {
+    expiresIn: "1h",
+  });
+  sendEmail(
+    email,
+    "Confirm Your Email",
+    `Click here to <a href='http://localhost:5050/auth/confirmEmail/${token}'>Verify Email</a>`
   );
 
   const createUser = await userModel.create({
@@ -53,4 +62,20 @@ export const login = async (req, res) => {
   );
 
   return res.status(200).json({ message: "success", token, refreshToken });
+};
+
+export const confirmEmail = async (req, res) => {
+  const { token } = req.params;
+  const decode = jwt.verify(token, process.env.CONFIRM_EMAIL_SECRET);
+  if (!decode) {
+    return res.status(404).json({ message: "Invalid token" });
+  }
+  const user = await userModel.findOneAndUpdate(
+    { email: decode.email, confirmEmail: false },
+    { confirmEmail: true }
+  );
+  if (!user) {
+    return res.status(400).json({ message: "Invalid verifying email or your email is already verified" });
+  }
+  return res.status(200).json({ message: "Your email is verified" });
 };

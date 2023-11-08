@@ -9,5 +9,6 @@ router.post(
   AuthController.signup
 );
 router.get("/login", AuthController.login);
+router.put("/confirmEmail/:token", AuthController.confirmEmail);
 
 export default router;
