@@ -5,6 +5,7 @@ import subcategoryRouter from "./subcategory/subcategory.router.js";
 import couponRouter from "./coupon/coupon.router.js";
 import authRouter from "./auth/auth.router.js";
 import cartRouter from "./cart/cart.router.js";
+import { globalErrorHandler } from "../services/errorHandling.js";
 
 const initApp = (app, express) => {
   app.use(express.json());
@@ -21,5 +22,7 @@ const initApp = (app, express) => {
   app.get("*", (req, res) => {
     return res.status(500).json({ message: "Page not found" });
   });
+  app.use(globalErrorHandler);
 };
+
 export default initApp;
