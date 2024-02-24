@@ -2,32 +2,37 @@ import { Router } from "express";
 import * as categoriesController from "./categories.controller.js";
 import subcategoryRouter from "./../subcategory/subcategory.router.js";
 import fileUpload, { fileValidation } from "../../services/multer.js";
-import { auth } from "../../middleware/auth.js";
+import { auth, roles } from "../../middleware/auth.js";
 import { endPoints } from "./category.endpoint.js";
+import { asyncHandler } from "../../services/errorHandling.js";
 const router = Router();
 
 router.use("/:id/subcategory", subcategoryRouter);
 router.get(
   "/active",
   auth(endPoints.getActive),
-  categoriesController.getActiveCategories
+  asyncHandler(categoriesController.getActiveCategories)
 );
-router.get("/", auth(endPoints.getAll), categoriesController.getCategories);
+router.get(
+  "/",
+  auth(Object.values(roles)),
+  asyncHandler(categoriesController.getCategories)
+);
 router.get(
   "/:id",
   auth(endPoints.specific),
-  categoriesController.getSpecificCategories
+  asyncHandler(categoriesController.getSpecificCategories)
 );
 router.post(
   "/",
   auth(endPoints.create),
   fileUpload(fileValidation.image).single("image"),
-  categoriesController.createCategory
+  asyncHandler(categoriesController.createCategory)
 );
 router.put(
   "/:id",
   auth(endPoints.update),
   fileUpload(fileValidation.image).single("image"),
-  categoriesController.updateCategory
+  asyncHandler(categoriesController.updateCategory)
 );
 export default router;
