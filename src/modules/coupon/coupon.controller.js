@@ -1,9 +1,9 @@
 import couponModel from "../../../DB/model/coupon.model.js";
 
-export const createCoupon = async (req, res) => {
+export const createCoupon = async (req, res, next) => {
   const { name, amount } = req.body;
   if (await couponModel.findOne({ name })) {
-    return res.status(409).json({ message: "coupon name already exists" });
+    return next(new Error("Coupon name already exists!", { cause: 409 }));
   }
   const coupon = await couponModel.create(req.body);
   return res.status(201).json({ message: "success", coupon });
@@ -14,16 +14,22 @@ export const getCoupon = async (req, res) => {
   return res.status(200).json({ message: "success", coupons });
 };
 
-export const updateCoupon = async (req, res) => {
+export const getSpecificCoupon = async (req, res) => {
+  const { id } = req.params;
+  const coupon = await couponModel.findById(id);
+  return res.status(200).json({ message: "success", coupon });
+};
+
+export const updateCoupon = async (req, res, next) => {
   const coupon = await couponModel.findById(req.params.id);
   if (!coupon) {
-    return res.status(404).json({ message: "coupon not found" });
+    return next(new Error("Coupon not found!", { cause: 404 }));
   }
   if (req.body.name) {
-    if (await couponModel.findOne({ name: req.params.name }).select("name")) {
-      return res
-        .status(409)
-        .json({ message: `coupon ${req.params.name} already exists` });
+    if (await couponModel.findOne({ name: req.body.name }).select("name")) {
+      return next(
+        new Error(`coupon ${req.body.name} already exists`, { cause: 409 })
+      );
     }
     coupon.name = req.body.name;
   }
@@ -34,7 +40,7 @@ export const updateCoupon = async (req, res) => {
   return res.status(200).json({ message: "success", coupon });
 };
 
-export const softDelete = async (req, res) => {
+export const softDelete = async (req, res, next) => {
   const { id } = req.params;
   const coupon = await couponModel.findByIdAndUpdate(
     { _id: id, isDeleted: false },
@@ -42,12 +48,12 @@ export const softDelete = async (req, res) => {
     { new: true }
   );
   if (!coupon) {
-    return res.status(400).json({ message: "con't delete this coupon!" });
+    return next(new Error("Con't delete this coupon!", { cause: 400 }));
   }
   return res.status(200).json({ message: "success", coupon });
 };
 
-export const restore = async (req, res) => {
+export const restore = async (req, res, next) => {
   const { id } = req.params;
   const coupon = await couponModel.findByIdAndUpdate(
     { _id: id, isDeleted: true },
@@ -55,16 +61,16 @@ export const restore = async (req, res) => {
     { new: true }
   );
   if (!coupon) {
-    return res.status(400).json({ message: "con't restore this coupon!" });
+    return next(new Error("Con't restore this coupon!", { cause: 400 }));
   }
   return res.status(200).json({ message: "success", coupon });
 };
 
-export const hardDelete = async (req, res) => {
+export const hardDelete = async (req, res, next) => {
   const { id } = req.params;
   const coupon = await couponModel.findByIdAndDelete({ _id: id });
   if (!coupon) {
-    return res.status(400).json({ message: "con't delete this coupon!" });
+    return next(new Error("Con't delete this coupon!", { cause: 400 }));
   }
   return res.status(200).json({ message: "success", coupon });
 };
