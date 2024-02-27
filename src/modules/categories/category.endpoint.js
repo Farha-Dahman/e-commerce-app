@@ -6,4 +6,5 @@ export const endPoints = {
   getActive: [roles.User],
   update: [roles.Admin],
   specific: [roles.Admin, roles.User],
+  delete: [roles.Admin],
 };

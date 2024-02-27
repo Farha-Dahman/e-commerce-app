@@ -70,3 +70,15 @@ export const updateCategory = async (req, res, next) => {
   await category.save();
   return res.status(200).json({ message: "success", category });
 };
+
+export const deleteCategory = async (req, res, next) => {
+  const { id } = req.params;
+  const deletedCategory = await categoryModel.findByIdAndDelete(id);
+
+  if (!deletedCategory) {
+    return next(new Error("category not found!", { cause: 404 }));
+  }
+  return res
+    .status(200)
+    .json({ message: "success", deletedCategory });
+};

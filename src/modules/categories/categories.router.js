@@ -35,4 +35,10 @@ router.put(
   fileUpload(fileValidation.image).single("image"),
   asyncHandler(categoriesController.updateCategory)
 );
+router.delete(
+  "/:id",
+  auth(endPoints.delete),
+  asyncHandler(categoriesController.deleteCategory)
+);
+
 export default router;
