@@ -21,7 +21,7 @@ router.get(
 router.get(
   "/:id",
   auth(endPoints.specific),
-  asyncHandler(categoriesController.getSpecificCategories)
+  asyncHandler(categoriesController.getSpecificCategory)
 );
 router.post(
   "/",

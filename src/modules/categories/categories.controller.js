@@ -7,7 +7,7 @@ export const getCategories = async (req, res) => {
   return res.status(200).json({ message: "success", categories });
 };
 
-export const getSpecificCategories = async (req, res) => {
+export const getSpecificCategory = async (req, res) => {
   const { id } = req.params;
   const category = await categoryModel.findById(id);
   return res.status(200).json({ message: "success", category });
