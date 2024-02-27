@@ -6,7 +6,16 @@ import fileUpload, { fileValidation } from "../../services/multer.js";
 import { asyncHandler } from "../../services/errorHandling.js";
 const router = Router();
 
-router.get("/", asyncHandler(productsRouter.getProducts));
+router.get(
+  "/",
+  auth(endPoints.getAll),
+  asyncHandler(productsRouter.getProducts)
+);
+router.get(
+  "/:id",
+  auth(endPoints.specific),
+  asyncHandler(productsRouter.getSpecificProduct)
+);
 router.post(
   "/",
   auth(endPoints.create),
@@ -16,5 +25,31 @@ router.post(
   ]),
   asyncHandler(productsRouter.createProduct)
 );
+router.put(
+  "/:id",
+  auth(endPoints.update),
+  asyncHandler(productsRouter.updateProduct)
+);
+router.patch(
+  "/softDelete/:id",
+  auth(endPoints.delete),
+  asyncHandler(productsRouter.softDelete)
+);
+router.delete(
+  "/hardDelete/:id",
+  auth(endPoints.delete),
+  asyncHandler(productsRouter.hardDelete)
+);
+router.patch(
+  "/restore/:id",
+  auth(endPoints.restore),
+  asyncHandler(productsRouter.restore)
+);
+router.patch(
+  "/status/:id",
+  auth(endPoints.status),
+  asyncHandler(productsRouter.changeStatus)
+);
+
 
 export default router;
