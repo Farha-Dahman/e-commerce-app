@@ -2,11 +2,12 @@ import { Router } from "express";
 import * as categoriesController from "./categories.controller.js";
 import subcategoryRouter from "./../subcategory/subcategory.router.js";
 import fileUpload, { fileValidation } from "../../services/multer.js";
-import { auth, roles } from "../../middleware/auth.js";
+import { auth } from "../../middleware/auth.js";
 import { endPoints } from "./category.endpoint.js";
 import { asyncHandler } from "../../services/errorHandling.js";
 import { validation } from "../../middleware/validation.js";
 import * as validators from "./category.validation.js";
+import { roles } from "../../constants/roles.js";
 const router = Router();
 
 router.use("/:id/subcategory", subcategoryRouter);

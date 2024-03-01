@@ -2,10 +2,11 @@ import { Router } from "express";
 import * as subcategoryController from "./subcategory.controller.js";
 import fileUpload, { fileValidation } from "../../services/multer.js";
 import { asyncHandler } from "../../services/errorHandling.js";
-import { auth, roles } from "../../middleware/auth.js";
+import { auth } from "../../middleware/auth.js";
 import { endPoints } from "./subcategory.endpoint.js";
 import { validation } from "../../middleware/validation.js";
 import * as validators from "./subcategory.validation.js";
+import { roles } from "../../constants/roles.js";
 const router = Router({ mergeParams: true });
 
 router.post(
