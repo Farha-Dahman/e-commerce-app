@@ -4,14 +4,14 @@ import subcategoryModel from "../../../DB/model/subcategory.model.js";
 import cloudinary from "../../services/cloudinary.js";
 
 export const createSubcategory = async (req, res, next) => {
-  const { name, CategoryId } = req.body;
+  const { name, categoryName } = req.body;
   const subcategory = await subcategoryModel.findOne({ name });
   if (subcategory) {
     return next(
       new Error(`subcategory ${name} already exist!`, { cause: 409 })
     );
   }
-  const category = await categoryModel.findById(CategoryId);
+  const category = await categoryModel.findOne({ name: categoryName });
   if (!category) {
     return res.status(404).json({ message: "category not found!" });
   }
@@ -24,7 +24,7 @@ export const createSubcategory = async (req, res, next) => {
   const subCategory = await subcategoryModel.create({
     name,
     slug: slugify(name),
-    CategoryId,
+    CategoryId: category._id,
     image: { public_id, secure_url },
   });
   return res.status(201).json({ message: "succuss", subCategory });
@@ -86,6 +86,13 @@ export const updateSubcategory = async (req, res, next) => {
     );
     await cloudinary.uploader.destroy(subcategory.image.public_id);
     subcategory.image = { public_id, secure_url };
+  }
+  if (req.body.categoryName) {
+    const newCategory = await categoryModel.findOne({ name: req.body.categoryName });
+    if (!newCategory) {
+      return next(new Error("Category not found!", { cause: 404 }));
+    }
+    subcategory.CategoryId = newCategory._id;
   }
   subcategory.updatedBy = req.user._id;
   await subcategory.save();

@@ -3,11 +3,14 @@ import * as couponController from "./coupon.controller.js";
 import { auth } from "../../middleware/auth.js";
 import { endPoints } from "./coupon.endpoint.js";
 import { asyncHandler } from "../../services/errorHandling.js";
+import { validation } from "../../middleware/validation.js";
+import * as validators from "./coupon.validation.js";
 const router = Router();
 
 router.post(
   "/",
   auth(endPoints.create),
+  validation(validators.createCouponSchema),
   asyncHandler(couponController.createCoupon)
 );
 router.get(
@@ -23,6 +26,7 @@ router.get(
 router.put(
   "/:id",
   auth(endPoints.update),
+  validation(validators.updateCouponSchema),
   asyncHandler(couponController.updateCoupon)
 );
 router.patch(

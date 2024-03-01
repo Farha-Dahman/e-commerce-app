@@ -4,12 +4,15 @@ import fileUpload, { fileValidation } from "../../services/multer.js";
 import { asyncHandler } from "../../services/errorHandling.js";
 import { auth, roles } from "../../middleware/auth.js";
 import { endPoints } from "./subcategory.endpoint.js";
+import { validation } from "../../middleware/validation.js";
+import * as validators from "./subcategory.validation.js";
 const router = Router({ mergeParams: true });
 
 router.post(
   "/",
   auth(endPoints.create),
   fileUpload(fileValidation.image).single("image"),
+  validation(validators.createSubcategorySchema),
   asyncHandler(subcategoryController.createSubcategory)
 );
 router.get(
@@ -21,6 +24,7 @@ router.put(
   "/:id",
   auth(endPoints.update),
   fileUpload(fileValidation.image).single("image"),
+  validation(validators.updateSubcategorySchema),
   asyncHandler(subcategoryController.updateSubcategory)
 );
 router.get(

@@ -4,6 +4,8 @@ import { auth } from "../../middleware/auth.js";
 import { endPoints } from "./product.endpoint.js";
 import fileUpload, { fileValidation } from "../../services/multer.js";
 import { asyncHandler } from "../../services/errorHandling.js";
+import { validation } from "../../middleware/validation.js";
+import * as validators from "./products.validation.js";
 const router = Router();
 
 router.get(
@@ -23,11 +25,17 @@ router.post(
     { name: "mainImage", maxCount: 1 },
     { name: "subImages", maxCount: 4 },
   ]),
+  validation(validators.createProductSchema),
   asyncHandler(productsRouter.createProduct)
 );
 router.put(
   "/:id",
   auth(endPoints.update),
+  fileUpload(fileValidation.image).fields([
+    { name: "mainImage", maxCount: 1 },
+    { name: "subImages", maxCount: 4 },
+  ]),
+  validation(validators.updateProductSchema),
   asyncHandler(productsRouter.updateProduct)
 );
 router.patch(

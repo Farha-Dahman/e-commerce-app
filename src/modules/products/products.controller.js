@@ -20,13 +20,14 @@ export const createProduct = async (req, res, next) => {
     color,
     size,
   } = req.body;
+  
   const checkCategory = await categoryModel.findById(category);
   if (!checkCategory) {
     return next(new Error("Category not found", { cause: 404 }));
   }
-  const checkSubCategory = await subcategoryModel.findById(subcategory);
+  const checkSubCategory = await subcategoryModel.findOne({ _id: subcategory, CategoryId: category });
   if (!checkSubCategory) {
-    return next(new Error("Subcategory not found", { cause: 404 }));
+    return next(new Error("Subcategory not found or does not belong to the specified category", { cause: 404 }));
   }
   if (await productModel.findOne({ name })) {
     return next(new Error("Product name already exist!", { cause: 409 }));
