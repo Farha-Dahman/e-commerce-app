@@ -284,7 +284,7 @@ export const signup = async (req, res, next) => {
     password: hashedPassword,
     image: { public_id, secure_url },
   });
-  return res.json({ message: "success", createUser });
+  return res.status(200).json({ message: "success", createUser });
 };
 
 export const login = async (req, res, next) => {
@@ -360,6 +360,7 @@ export const forgetPassword = async (req, res, next) => {
   }
   user.password = await bcrypt.hash(password, parseInt(process.env.SALT_ROUND));
   user.sendCode = null;
+  user.changePasswordTime = Date.now();
   await user.save();
   return res.status(200).json({ message: "success" });
 };
