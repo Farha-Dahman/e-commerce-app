@@ -14,6 +14,11 @@ router.get(
   asyncHandler(productsRouter.getProducts)
 );
 router.get(
+  "/:categoryId",
+  auth(endPoints.getAll),
+  asyncHandler(productsRouter.getProductsWithCategory)
+);
+router.get(
   "/:id",
   auth(endPoints.specific),
   asyncHandler(productsRouter.getSpecificProduct)

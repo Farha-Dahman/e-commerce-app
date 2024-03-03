@@ -9,6 +9,11 @@ export const getProducts = async (req, res) => {
   return res.status(200).json({ message: "success", products });
 };
 
+export const getProductsWithCategory = async (req, res) => {
+  const products = await productModel.find({ category: req.params.categoryId });
+  return res.status(200).json({ message: "success", products });
+};
+
 export const createProduct = async (req, res, next) => {
   const {
     name,
@@ -20,14 +25,22 @@ export const createProduct = async (req, res, next) => {
     color,
     size,
   } = req.body;
-  
+
   const checkCategory = await categoryModel.findById(category);
   if (!checkCategory) {
     return next(new Error("Category not found", { cause: 404 }));
   }
-  const checkSubCategory = await subcategoryModel.findOne({ _id: subcategory, CategoryId: category });
+  const checkSubCategory = await subcategoryModel.findOne({
+    _id: subcategory,
+    CategoryId: category,
+  });
   if (!checkSubCategory) {
-    return next(new Error("Subcategory not found or does not belong to the specified category", { cause: 404 }));
+    return next(
+      new Error(
+        "Subcategory not found or does not belong to the specified category",
+        { cause: 404 }
+      )
+    );
   }
   if (await productModel.findOne({ name })) {
     return next(new Error("Product name already exist!", { cause: 409 }));
